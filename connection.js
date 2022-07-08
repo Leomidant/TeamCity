@@ -8,8 +8,8 @@ var conditionNames = ["1Mbps", "900kbps", "800kbps", "700kbps", "600kbps", "500k
 
 
 
-function getCondition(type,value){
-    if(type == true) return getConditionVideo(value)
+function getCondition(type, value) {
+    if (type == true) return getConditionVideo(value)
     else return getConditionAudio(value)
 }
 
@@ -98,7 +98,7 @@ function getConditionVideo(conditionName) {
             loss = "50"
             break
     }
-    
+
     var condition = bandwith + " " + latency + " " + loss + " " + buffer
     console.log(condition)
     return condition
@@ -252,8 +252,8 @@ function sleep(milliseconds) {
 }
 
 
-function setParametersFromName(type,value) {
-    client.projects.setParameter(projectId, "CONDITION", getCondition(type,value))
+function setParametersFromName(type, value) {
+    client.projects.setParameter(projectId, "CONDITION", getCondition(type, value))
     client.projects.setParameter(projectId, "CONDITION_NAME", value)
 }
 function sendTestType(type) {
@@ -291,7 +291,7 @@ function getResponseLastBuild(buildNode) {
 }
 function startBuildConfig(buildNode) {
 
-    setParametersFromName(true,conditionNames[12])
+    setParametersFromName(true, conditionNames[12])
     sendTestType("Android_MSTeams_ShareScreenDynamic")
     var buildNodeObject = "<build> <buildType id=\"" + buildNode + "\"/> </build>"
     client.builds.startBuild(buildNodeObject)
@@ -305,19 +305,30 @@ function startBuildConfig(buildNode) {
 
 
 
-const path = "./tdl.py";
-checkFileExistance(path)
-function checkFileExistance(path){
+const path = "./tdl1.py";
+
+checkFileExistance(path,2000,20)
+// checkTime = every time check should be done in miliseconds
+// timeLimit = maximum wait in seconds in seconds
+function checkFileExistance(path,checkTime,timeLimit) {
     const fs = require("fs");
 
-if (fs.existsSync(path)) {
-  // path exists
-  console.log("Analyse finished")
-} else {
- // console.log("DOES NOT exist:", path);
-    sleep(2000)
-    console.log("Analyising")
-    checkFileExistance(path)
-    
+    var finishText = "Analyse Finished"
+
+    var maxTime = timeLimit / (checkTime/1000)  // Max Time = checkTime * timeLimit
+
+    while (!fs.existsSync(path)) {
+        sleep(checkTime)
+        console.log("Analysing")
+
+        if (maxTime == 0) {
+            finishText = "Time Limit Exceed"
+            break
+        }
+
+        maxTime--
+
+    }
+    console.log(finishText)
 }
-}
+
