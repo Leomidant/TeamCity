@@ -8,118 +8,206 @@ var conditionNames = ["1Mbps", "900kbps", "800kbps", "700kbps", "600kbps", "500k
 
 
 
+function getCondition(type,value){
+    if(type == true) return getConditionVideo(value)
+    else return getConditionAudio(value)
+}
 
-
-function getCondition(conditionName) {
-
-    var bandwith, buffer = "0", latency, loss;
+function getConditionVideo(conditionName) {
+    var bandwith, latency = "0", loss, buffer = "200";
 
     switch (conditionName) {
         case "1Mbps":
             bandwith = "1000"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "900kbps":
             bandwith = "900"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "800kbps":
             bandwith = "800"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "700kbps":
             bandwith = "700"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "600kbps":
             bandwith = "600"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "500kbps":
             bandwith = "500"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "400kbps":
             bandwith = "400"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "300kbps":
             bandwith = "300"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "200kbps":
             bandwith = "200"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "100kbps":
             bandwith = "100"
-            latency = "0"
-            loss = "200"
+            loss = "0"
             break
         case "5PL":
             bandwith = "32000000"
-            latency = "5"
-            loss = "200"
+            loss = "5"
             break
         case "10PL":
             bandwith = "32000000"
-            latency = "10"
-            loss = "200"
+            loss = "10"
             break
         case "15PL":
             bandwith = "32000000"
-            latency = "15"
-            loss = "200"
+            loss = "15"
             break
         case "20PL":
             bandwith = "32000000"
-            latency = "20"
-            loss = "200"
+            loss = "20"
             break
         case "25PL":
             bandwith = "32000000"
-            latency = "25"
-            loss = "200"
+            loss = "25"
             break
         case "30PL":
             bandwith = "32000000"
-            latency = "30"
-            loss = "200"
+            loss = "30"
             break
         case "35PL":
             bandwith = "32000000"
-            latency = "35"
-            loss = "200"
+            loss = "35"
             break
         case "40PL":
             bandwith = "32000000"
-            latency = "40"
-            loss = "200"
+            loss = "40"
             break
         case "45PL":
             bandwith = "32000000"
-            latency = "45"
-            loss = "200"
+            loss = "45"
             break
         case "50PL":
             bandwith = "32000000"
-            latency = "50"
-            loss = "200"
+            loss = "50"
+            break
+    }
+    
+    var condition = bandwith + " " + latency + " " + loss + " " + buffer
+    console.log(condition)
+    return condition
+}
+
+function getConditionAudio(conditionName) {
+    var bandwith, latency = "0", loss, buffer = "200";
+
+    switch (conditionName) {
+        case "200kbps":
+            bandwith = "200"
+            loss = "0"
+            break
+        case "150kbps":
+            bandwith = "150"
+            loss = "0"
+            break
+        case "140kbps":
+            bandwith = "140"
+            loss = "0"
+            break
+        case "130kbps":
+            bandwith = "130"
+            loss = "0"
+            break
+        case "120kbps":
+            bandwith = "120"
+            loss = "0"
+            break
+        case "110kbps":
+            bandwith = "110"
+            loss = "0"
+            break
+        case "100kbps":
+            bandwith = "100"
+            loss = "0"
+            break
+        case "90kbps":
+            bandwith = "90"
+            loss = "0"
+            break
+        case "80kbps":
+            bandwith = "80"
+            loss = "0"
+            break
+        case "70kbps":
+            bandwith = "70"
+            loss = "0"
+            break
+        case "60kbps":
+            bandwith = "60"
+            loss = "0"
+            break
+        case "50kbps":
+            bandwith = "50"
+            loss = "0"
+            break
+        case "40kbps":
+            bandwith = "40"
+            loss = "0"
+            break
+        case "5PL":
+            bandwith = "32000000"
+            loss = "5"
+            break
+        case "10PL":
+            bandwith = "32000000"
+            loss = "10"
+            break
+        case "15PL":
+            bandwith = "32000000"
+            loss = "15"
+            break
+        case "20PL":
+            bandwith = "32000000"
+            loss = "20"
+            break
+        case "25PL":
+            bandwith = "32000000"
+            loss = "25"
+            break
+        case "30PL":
+            bandwith = "32000000"
+            loss = "30"
+            break
+        case "35PL":
+            bandwith = "32000000"
+            loss = "35"
+            break
+        case "40PL":
+            bandwith = "32000000"
+            loss = "40"
+            break
+        case "45PL":
+            bandwith = "32000000"
+            loss = "45"
+            break
+        case "50PL":
+            bandwith = "32000000"
+            loss = "50"
             break
     }
 
-    var condition = bandwith + " " + buffer + " " + latency + " " + loss
+    var condition = bandwith + " " + latency + " " + loss + " " + buffer
     return condition
 }
+
+
+
 
 function downloadBuildLog(id) {
     var request = require('request')
@@ -164,8 +252,8 @@ function sleep(milliseconds) {
 }
 
 
-function setParametersFromName(value) {
-    client.projects.setParameter(projectId, "CONDITION", getCondition(value))
+function setParametersFromName(type,value) {
+    client.projects.setParameter(projectId, "CONDITION", getCondition(type,value))
     client.projects.setParameter(projectId, "CONDITION_NAME", value)
 }
 function sendTestType(type) {
@@ -203,7 +291,7 @@ function getResponseLastBuild(buildNode) {
 }
 function startBuildConfig(buildNode) {
 
-    setParametersFromName(conditionNames[12])
+    setParametersFromName(true,conditionNames[12])
     sendTestType("Android_MSTeams_ShareScreenDynamic")
     var buildNodeObject = "<build> <buildType id=\"" + buildNode + "\"/> </build>"
     client.builds.startBuild(buildNodeObject)
@@ -213,7 +301,17 @@ function startBuildConfig(buildNode) {
         });
 
 }
-startBuildConfig(buildNodeMerged)
+//startBuildConfig(buildNodeMerged)
 
 
 
+const fs = require("fs");
+
+const path = "/Users/bekarazmadze/Desktop/connect.rtf";
+
+if (fs.existsSync(path)) {
+  // path exists
+  console.log("exists:", path);
+} else {
+  console.log("DOES NOT exist:", path);
+}
