@@ -305,13 +305,19 @@ function startBuildConfig(buildNode) {
 
 
 
-const fs = require("fs");
-
-const path = "/Users/bekarazmadze/Desktop/connect.rtf";
+const path = "./tdl.py";
+checkFileExistance(path)
+function checkFileExistance(path){
+    const fs = require("fs");
 
 if (fs.existsSync(path)) {
   // path exists
-  console.log("exists:", path);
+  console.log("Analyse finished")
 } else {
-  console.log("DOES NOT exist:", path);
+ // console.log("DOES NOT exist:", path);
+    sleep(2000)
+    console.log("Analyising")
+    checkFileExistance(path)
+    
+}
 }
