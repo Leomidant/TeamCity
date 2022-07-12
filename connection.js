@@ -17,6 +17,12 @@ function getConditionVideo(conditionName) {
     var bandwith, latency = "0", loss, buffer = "200";
 
     switch (conditionName) {
+        case "Unlimited":
+            bandwith = ""
+            latency = ""
+            loss = ""
+            buffer = ""
+            break
         case "1Mbps":
             bandwith = "1000"
             loss = "0"
@@ -242,6 +248,49 @@ var client = teamcity.create({
     username: "tdl",
     password: "12345678"
 });
+var firstClient = teamcity.create({
+    url: "http://localhost:8111",
+    username: "tdl",
+    password: "12345678"
+});
+
+var secondClient = teamcity.create({
+    url: "http://localhost:8111",
+    username: "tdl",
+    password: "12345678"
+});
+var thirdClient = teamcity.create({
+    url: "http://localhost:8111",
+    username: "tdl",
+    password: "12345678"
+});
+var fourthClient = teamcity.create({
+    url: "http://localhost:8111",
+    username: "tdl",
+    password: "12345678"
+});
+
+function getInstance(platform) {
+    switch (platform) {
+        case "Android":
+            client = firstClient
+            break
+        case "iOS":
+            client = secondClient
+            break
+        case "Mac":
+            client = thirdClient
+            break
+        case "Windows":
+            client = fourthClient
+            break
+    }
+
+    return client
+}
+var platform = "Android"
+var client = getInstance(platform)
+
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -305,17 +354,56 @@ function startBuildConfig(buildNode) {
 
 
 
-const path = "./tdl1.py";
+const path = "krisjanis@10.1.16.86:/home/krisjanis/RCV/test_results/testFile1.txt";
 
-checkFileExistance(path,2000,20)
+
+//copyFileFromTerminal(2000,1200)
+function copyFileFromTerminal(checkTime, timeLimit) {
+    const { execSync } = require("child_process");
+
+    var maxTime = timeLimit / (checkTime / 1000)  // Max Time = checkTime * timeLimit
+    var finalDestination = "/Users/bekarazmadze/Desktop/Repos/TeamCity"
+    var startingPoint = "/home/krisjanis/RCV/test_results/testFile1.txt"
+    var serverAddress = "krisjanis@10.1.16.86"
+    var copyAnalysedFile = "scp "+ serverAddress +":"+ startingPoint + " " + finalDestination
+
+    copyAnalysedFile= "ssh krisjanis@10.1.16.86 \"if [ -f /home/krisjanis/RCV/test_results/testFile1.txt ]; then echo yes; else echo no; fi""
+
+
+    var checkFileCreated = false
+    while (checkFileCreated == false) {
+        var finalText = "Analysing"
+        try {
+            sleep(checkTime)
+            const output = execSync(copyAnalysedFile, { encoding: "utf-8" });
+
+            checkFileCreated = true
+            finalText = "Analysed"
+
+        }
+        catch (err) {
+            if (maxTime == 0) {
+                 finalText = "Time Limit Exceed"
+                break
+            }
+            maxTime--
+        }
+
+        console.log(finalText)
+
+
+    }
+}
+
+checkFileExistance(path,2000,6)
 // checkTime = every time check should be done in miliseconds
-// timeLimit = maximum wait in seconds in seconds
-function checkFileExistance(path,checkTime,timeLimit) {
+// timeLimit = maximum wait in seconds
+function checkFileExistance(path, checkTime, timeLimit) {
     const fs = require("fs");
 
     var finishText = "Analyse Finished"
 
-    var maxTime = timeLimit / (checkTime/1000)  // Max Time = checkTime * timeLimit
+    var maxTime = timeLimit / (checkTime / 1000)  // Max Time = checkTime * timeLimit
 
     while (!fs.existsSync(path)) {
         sleep(checkTime)
