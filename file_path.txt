@@ -1,0 +1,3 @@
+/home/krisjanis/RCV/results/20220713/MSTeams/AndroidAndroidApp/Dynamic/Unlimited/2part/20220713-013124/vmaf.txt
+/home/krisjanis/RCV/results/20220713/MSTeams/AndroidAndroidApp/Dynamic/Unlimited/2part/20220713-013124/fps1.txt
+/home/krisjanis/RCV/results/20220713/MSTeams/AndroidAndroidApp/Dynamic/Unlimited/2part/20220713-013124/fps.txt

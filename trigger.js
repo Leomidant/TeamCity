@@ -1,8 +1,9 @@
+const path = require("path");
 var teamcity = require("teamcity-rest-api");
 var projectId = "TeamCityCheck"
 var buildId = "ParameterBuild"
 var buildNodeMerged = projectId + "_" + buildId
-var logDownloadUrl = "http://127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId="
+var logDownloadUrl = "http://tdl:12345678@127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId="
 var conditionNames = ["1Mbps", "900kbps", "800kbps", "700kbps", "600kbps", "500kbps", "400kbps", "300kbps", "200kbps", "100kbps", "5PL", "10PL", "15PL", "20PL", "25PL", "30PL", "35PL", "40PL", "45PL", "50PL"]
 
 
@@ -106,7 +107,6 @@ function getConditionVideo(conditionName) {
     }
 
     var condition = bandwith + " " + latency + " " + loss + " " + buffer
-    console.log(condition)
     return condition
 }
 
@@ -114,6 +114,12 @@ function getConditionAudio(conditionName) {
     var bandwith, latency = "0", loss, buffer = "200";
 
     switch (conditionName) {
+        case "Unlimited":
+            bandwith = ""
+            latency = ""
+            loss = ""
+            buffer = ""
+            break
         case "200kbps":
             bandwith = "200"
             loss = "0"
@@ -219,6 +225,7 @@ function downloadBuildLog(id) {
     var request = require('request')
     var username = 'tdl'
     var password = '12345678'
+    var logDownloadUrl = "http://"+username+":"+password+"@127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId="+id
     var options = {
         url: 'http://localhost:8111/',
         auth: {
@@ -233,14 +240,12 @@ function downloadBuildLog(id) {
         }
         else {
             const open = require('open');
-            open(logDownloadUrl + id)
+            open(logDownloadUrl)
 
         }
 
     })
 }
-
-
 
 
 var client = teamcity.create({
@@ -305,13 +310,10 @@ function setParametersFromName(type, value) {
     client.projects.setParameter(projectId, "CONDITION", getCondition(type, value))
     client.projects.setParameter(projectId, "CONDITION_NAME", value)
 }
+
 function sendTestType(type) {
     client.projects.setParameter(projectId, "TEST_TYPE", type)
 }
-
-
-
-
 
 
 function getResponseLastBuild(buildNode) {
@@ -324,9 +326,11 @@ function getResponseLastBuild(buildNode) {
             state = buildList.build[0].state
             branchName = buildList.build[0].branchName
             buildNum = buildList.build[0].id
+            var percentageComplete = buildList.build[0].percentageComplete
+            if(percentageComplete == null) percentageComplete = "0"
             if (state != "finished") {
                 sleep(1000)
-                console.log(state)
+                console.log(state + "; " + percentageComplete +"%")
                 getResponseLastBuild(buildNode)
             }
             else {
@@ -338,36 +342,26 @@ function getResponseLastBuild(buildNode) {
 
         });
 }
+
 function startBuildConfig(buildNode) {
 
-    setParametersFromName(true, conditionNames[12])
+    setParametersFromName(true, conditionNames[1])
     sendTestType("Android_MSTeams_ShareScreenDynamic")
+
+    
     var buildNodeObject = "<build> <buildType id=\"" + buildNode + "\"/> </build>"
     client.builds.startBuild(buildNodeObject)
         .then(function (buildStatus) {
-            //  console.log(buildStatus.id)
             getResponseLastBuild(buildNodeMerged)
         });
 
 }
-//startBuildConfig(buildNodeMerged)
 
-
-
-const path = "krisjanis@10.1.16.86:/home/krisjanis/RCV/test_results/testFile1.txt";
-
-
-//copyFileFromTerminal(2000,1200)
-function copyFileFromTerminal(checkTime, timeLimit) {
+function copyFileFromTerminal(startingPoint,finalDestination,serverAddress,checkTime, timeLimit) {
     const { execSync } = require("child_process");
-
+   
     var maxTime = timeLimit / (checkTime / 1000)  // Max Time = checkTime * timeLimit
-    var finalDestination = "/Users/bekarazmadze/Desktop/Repos/TeamCity"
-    var startingPoint = "/home/krisjanis/RCV/test_results/testFile1.txt"
-    var serverAddress = "krisjanis@10.1.16.86"
     var copyAnalysedFile = "scp "+ serverAddress +":"+ startingPoint + " " + finalDestination
-
-    copyAnalysedFile= "ssh krisjanis@10.1.16.86 \"if [ -f /home/krisjanis/RCV/test_results/testFile1.txt ]; then echo yes; else echo no; fi""
 
 
     var checkFileCreated = false
@@ -395,28 +389,31 @@ function copyFileFromTerminal(checkTime, timeLimit) {
     }
 }
 
-checkFileExistance(path,2000,6)
-// checkTime = every time check should be done in miliseconds
-// timeLimit = maximum wait in seconds
-function checkFileExistance(path, checkTime, timeLimit) {
-    const fs = require("fs");
 
-    var finishText = "Analyse Finished"
 
-    var maxTime = timeLimit / (checkTime / 1000)  // Max Time = checkTime * timeLimit
+function syncReadFile(filename) {
+const {readFileSync, promises: fsPromises} = require('fs');
 
-    while (!fs.existsSync(path)) {
-        sleep(checkTime)
-        console.log("Analysing")
+  const contents = readFileSync(filename, 'utf-8');
 
-        if (maxTime == 0) {
-            finishText = "Time Limit Exceed"
-            break
-        }
+  const arr = contents.split(/\r?\n/);
 
-        maxTime--
+  var path = arr
 
-    }
-    console.log(finishText)
+
+
+  return path;
 }
 
+
+function checkAnalysing(platform){
+    var paths = syncReadFile("./file_path.txt")
+    var finalDestination = "/Users/bekarazmadze/Desktop/Repos/TeamCity"
+    var serverAddress
+
+    if(platform) serverAddress = "krisjanis@10.1.16.86"
+    else serverAddress = "krisjanis@10.11.52.88"
+    
+    paths.forEach(eachPath => copyFileFromTerminal(eachPath,finalDestination,serverAddress,1000,5))
+
+}
