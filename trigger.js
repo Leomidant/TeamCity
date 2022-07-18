@@ -1,9 +1,10 @@
+const { type } = require("os");
 const path = require("path");
 var teamcity = require("teamcity-rest-api");
-var projectId = "TeamCityCheck"
-var buildId = "ParameterBuild"
-var buildNodeMerged = projectId + "_" + buildId
-var logDownloadUrl = "http://tdl:12345678@127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId="
+var projectId
+var buildId
+var platformCheck
+//var logDownloadUrl = "http://tdl:12345678@127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId=500"
 var conditionNames = ["1Mbps", "900kbps", "800kbps", "700kbps", "600kbps", "500kbps", "400kbps", "300kbps", "200kbps", "100kbps", "5PL", "10PL", "15PL", "20PL", "25PL", "30PL", "35PL", "40PL", "45PL", "50PL"]
 
 
@@ -221,10 +222,10 @@ function getConditionAudio(conditionName) {
 
 
 
-function downloadBuildLog(id) {
+function downloadBuildLog(id) { //working but need refactor
     var request = require('request')
     var username = 'tdl'
-    var password = '12345678'
+    var password = '09Mi^4oB9L7@'
     var logDownloadUrl = "http://"+username+":"+password+"@127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId="+id
     var options = {
         url: 'http://localhost:8111/',
@@ -248,53 +249,57 @@ function downloadBuildLog(id) {
 }
 
 
-var client = teamcity.create({
-    url: "http://localhost:8111",
-    username: "tdl",
-    password: "12345678"
-});
-var firstClient = teamcity.create({
-    url: "http://localhost:8111",
-    username: "tdl",
-    password: "12345678"
-});
 
-var secondClient = teamcity.create({
-    url: "http://localhost:8111",
-    username: "tdl",
-    password: "12345678"
-});
-var thirdClient = teamcity.create({
-    url: "http://localhost:8111",
-    username: "tdl",
-    password: "12345678"
-});
-var fourthClient = teamcity.create({
-    url: "http://localhost:8111",
-    username: "tdl",
-    password: "12345678"
-});
+function getInstance(platform,type) {
 
-function getInstance(platform) {
-    switch (platform) {
-        case "Android":
-            client = firstClient
-            break
-        case "iOS":
-            client = secondClient
-            break
-        case "Mac":
-            client = thirdClient
-            break
-        case "Windows":
-            client = fourthClient
-            break
+
+    if(platform == "WindowsToWindowsApp" || platform == "WindowsToWindowsChrome" ||
+        platform == "MacToMacApp" || platform == "MacToMacChrome"){
+        url = "http://10.1.16.86:8111"
+        projectId = "RingCentral"
+        buildId = ""
+        platformCheck = true
+    }
+    else if(platform == "iPhoneToiPhone"){
+        if(type == "Audio" || type == "Video"){
+            url = "http://172.16.73.6:8111"
+            projectId = "RingCentralMobileTests"
+            buildId = ""
+
+        }
+        else{
+            url = "http://172.16.104.3:8111"
+            projectId = "IPhoneIPhoneScreenShare"
+            buildId = ""
+
+        }
+        platformCheck = false
+    }
+    else if(platform == "AndroidToAndroid"){
+        if(type == "Audio" || type == "Video"){
+            url = "http://172.16.248.5:8111"
+            projectId = "RingCentralMobileTests"
+            buildId = ""
+
+        }
+        else{
+            url = "http://172.16.139.3:8111"
+            projectId = "AndroidToAndroid"
+            buildId = ""
+
+        }
+        platformCheck = false
     }
 
+    var client = teamcity.create({
+        url: url,
+        username: "tdl",
+        password: "09Mi^4oB9L7@"
+    });
+
+    var buildNodeMerged = projectId + "_" + buildId
     return client
 }
-var platform = "Android"
-var client = getInstance(platform)
 
 
 function sleep(milliseconds) {
@@ -343,13 +348,19 @@ function getResponseLastBuild(buildNode) {
         });
 }
 
-function startBuildConfig(buildNode) {
-
-    setParametersFromName(true, conditionNames[1])
-    sendTestType("Android_MSTeams_ShareScreenDynamic")
-
+function startBuildConfig(conditionName, platform, application, callType ) {
     
-    var buildNodeObject = "<build> <buildType id=\"" + buildNode + "\"/> </build>"
+    var client = getInstance(platform,callType)
+
+    var typeCheck = true
+    if (testType != "Audio") typeCheck = false
+
+    setParametersFromName(typeCheck, conditionName)
+//    sendTestType("Android_MSTeams_ShareScreenDynamic")
+    sendTestType(platform + "_" + application + "_" + callType)
+
+
+    var buildNodeObject = "<build> <buildType id=\"" + buildNodeMerged + "\"/> </build>"
     client.builds.startBuild(buildNodeObject)
         .then(function (buildStatus) {
             getResponseLastBuild(buildNodeMerged)
@@ -406,14 +417,14 @@ const {readFileSync, promises: fsPromises} = require('fs');
 }
 
 
-function checkAnalysing(platform){
+function checkAnalysing(){
     var paths = syncReadFile("./file_path.txt")
     var finalDestination = "/Users/bekarazmadze/Desktop/Repos/TeamCity"
     var serverAddress
 
-    if(platform) serverAddress = "krisjanis@10.1.16.86"
+    if(platformCheck) serverAddress = "krisjanis@10.1.16.86"
     else serverAddress = "krisjanis@10.11.52.88"
     
     paths.forEach(eachPath => copyFileFromTerminal(eachPath,finalDestination,serverAddress,1000,5))
 
-}
+}            
