@@ -259,27 +259,27 @@ class Trigger{
     
         if(platform == "WindowsToWindowsApp" || platform == "WindowsToWindowsChrome"){
             url = "http://10.1.16.86:8111"
-            this.projectId = "RingCentral"
-            this.buildId = ""
+            this.projectId = "RingCentralTestTrigger"
+            this.buildId = "Windows"
             this.platformCheck = true
         }
         else if(platform == "MacToMacApp" || platform=="MacToMacChrome"){
             url = "http://10.1.16.86:8080"
-            this.projectId = "RingCentral"
-            this.buildId = ""
+            this.projectId = "RingCentralTestTrigger"
+            this.buildId = "Mac"
             this.platformCheck = true
         }
         else if(platform == "iPhoneToiPhone"){
             this.url = "http://10.11.52.88:8111"
-            this.projectId = "RingCentralMobileTests"
-            this.buildId = ""
+            this.projectId = "RingCentralTestTrigger_"
+            this.buildId = "IPhone"
     
             this.platformCheck = false
         }
         else if(platform == "AndroidToAndroid"){
             this.url = "http://10.11.52.88:8080"
-            this.projectId = "RingCentralMobileTests"
-            this.buildId = ""
+            this.projectId = "RingCentralTestTrigger"
+            this.buildId = "Android"
 
             this.platformCheck = false
         }
