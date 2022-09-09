@@ -6,10 +6,6 @@ var teamcity = require("teamcity-rest-api");
 //var logDownloadUrl = "http://tdl:12345678@127.0.0.1:8111/httpAuth/downloadBuildLog.html?buildId=500"
 
 
-
-
-            
-
 class Trigger{
 
     constructor(){
@@ -261,48 +257,37 @@ class Trigger{
     getInstance(platform,type) {
     
     
-        if(platform == "WindowsToWindowsApp" || platform == "WindowsToWindowsChrome" ||
-            platform == "MacToMacApp" || platform == "MacToMacChrome"){
+        if(platform == "WindowsToWindowsApp" || platform == "WindowsToWindowsChrome"){
             url = "http://10.1.16.86:8111"
             this.projectId = "RingCentral"
             this.buildId = ""
             this.platformCheck = true
         }
+        else if(platform == "MacToMacApp" || platform=="MacToMacChrome"){
+            url = "http://10.1.16.86:8080"
+            this.projectId = "RingCentral"
+            this.buildId = ""
+            this.platformCheck = true
+        }
         else if(platform == "iPhoneToiPhone"){
-            if(type == "Audio" || type == "Video"){
-                this.url = "http://172.16.73.6:8111"
-                this.projectId = "RingCentralMobileTests"
-                this.buildId = ""
+            this.url = "http://10.11.52.88:8111"
+            this.projectId = "RingCentralMobileTests"
+            this.buildId = ""
     
-            }
-            else{
-                this.url = "http://172.16.104.3:8111"
-                this.projectId = "IPhoneIPhoneScreenShare"
-                this.buildId = ""
-    
-            }
             this.platformCheck = false
         }
         else if(platform == "AndroidToAndroid"){
-            if(type == "Audio" || type == "Video"){
-                this.url = "http://172.16.248.5:8111"
-                this.projectId = "RingCentralMobileTests"
-                this.buildId = ""
-                
-            }
-            else{
-                this.url = "http://172.16.139.3:8111"
-                this.projectId = "AndroidToAndroid"
-                this.buildId = ""
-    
-            }
+            this.url = "http://10.11.52.88:8080"
+            this.projectId = "RingCentralMobileTests"
+            this.buildId = ""
+
             this.platformCheck = false
         }
     
         var client = teamcity.create({
             url: this.url,
-            username: "tdl",
-            password: "09Mi^4oB9L7@"
+            username: "triggerPage",
+            password: "trigger4RCV!"
         });
         this.buildNodeMerged = this.projectId + "_" + this.buildId
         return client
